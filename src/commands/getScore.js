@@ -39,7 +39,7 @@ export default {
 
     // Get the current score and lifetime score of the specified user
     const score = getUserPoints(guildId, userId);
-    const allTimeScore = getUserAllTimePoints(guildId, userId);
+    const allTimeScore = await getUserAllTimePoints(guildId, userId);
 
     // Tell the command executor the scores of the specified user
     await interaction.reply({

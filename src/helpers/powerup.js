@@ -24,24 +24,24 @@ export function awardRandomPowerup(guildId, userId) {
 }
 
 //Checks if user has a freeze powerup.
-export function consumeFreeze(guildId, userId) {
+export async function consumeFreeze(guildId, userId) {
   const guildStore = powerups.get(guildId);
   if (!guildStore) return false;
 
   if (guildStore[userId]?.freeze) {
     delete guildStore[userId].freeze;
-    addPowerupUsed(guildId, userId);
+    await addPowerupUsed(guildId, userId);
     return true;
   }
 
   return false;
 }
 // Checks if the user has the double points powerup and consumes it if they do.
-export function consumeDoublePoints(guildId, userId) {
+export async function consumeDoublePoints(guildId, userId) {
   const guildStore = powerups.get(guildId);
   if (guildStore?.[userId]?.doublePoints) {
     guildStore[userId].doublePoints = false; // Use it up
-    addPowerupUsed(guildId, userId);
+    await addPowerupUsed(guildId, userId);
     return true;
   }
   return false;
@@ -53,7 +53,7 @@ export default {
     .setDescription("Give yourself a random powerup for the next round"),
 
   async execute(interaction) {
-   
+
     await interaction.deferReply({ephemeral: true});
      if (!interaction.guild) {
       return interaction.editReply({
@@ -67,7 +67,7 @@ export default {
     const guildStore = getGuildStore(guildId);
     const options = ["freeze", "doublePoints"];
 
-    
+
     // For randomly getting a powerup from the powerup options
     const randPowerup = options[Math.floor(Math.random() * options.length)]
     // Prevent stacking infinite freezes
@@ -100,5 +100,5 @@ export default {
       }
     }
   },
-  
+
 };*/

@@ -34,12 +34,12 @@ export default {
     const username = interaction.options.getUser("user").username;
 
     // Get stats for that user
-    const roundsPlayed = getRoundsPlayed(guildId, userId);
-    const roundsWon = getRoundsWon(guildId, userId);
-    const gamesPlayed = getGamesPlayed(guildId, userId);
-    const gamesWon = getGamesWon(guildId, userId);
-    const hintsUsed = getHintsUsed(guildId, userId);
-    const powerupsUsed = getPowerupsUsed(guildId, userId);
+    const roundsPlayed = await getRoundsPlayed(guildId, userId);
+    const roundsWon = await getRoundsWon(guildId, userId);
+    const gamesPlayed = await getGamesPlayed(guildId, userId);
+    const gamesWon = await getGamesWon(guildId, userId);
+    const hintsUsed = await getHintsUsed(guildId, userId);
+    const powerupsUsed = await getPowerupsUsed(guildId, userId);
 
     await interaction.reply({
       content: `${username}'s stats:\nRounds played: ${roundsPlayed}\nRounds won: ${roundsWon}\nGames played: ${gamesPlayed}\nGames won: ${gamesWon}\nHints used: ${hintsUsed}\nPowerups used: ${powerupsUsed}`,

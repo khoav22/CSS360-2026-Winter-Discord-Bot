@@ -40,6 +40,7 @@ import fs from "node:fs";
 import { getGenre, getSession, setSession, clearSession } from "../gameState.js";
 import { resetScores, addPoints, getGuildScoresSorted } from "../helpers/scoreStore.js";
 import { addRoundPlayed, addRoundWon, addGamePlayed, addGameWon, addHintUsed } from "../helpers/statsStore.js";
+import { recordUsername } from "../helpers/usersStore.js";
 import { makeHint } from "../helpers/hintHelper.js";
 import { makeSongQuestion, createTriviaQuestion, createResultEmbed } from "../helpers/triviaHelper.js";
 import { getRandomItunesTrack, downloadPreview } from "../helpers/itunes.js";
@@ -543,8 +544,8 @@ async function handleQuestionPhase(textChannel, question, track, difficulty, gui
   const answeredUsers = new Set();
 
   // Check for active power-ups
-  const freezeActive = consumeFreeze(guildId, session.hostId);
-  const doublePtsActive = consumeDoublePoints(guildId, session.hostId);
+  const freezeActive = await consumeFreeze(guildId, session.hostId);
+  const doublePtsActive = await consumeDoublePoints(guildId, session.hostId);
 
   if (freezeActive) {
     await textChannel.send(`❄️ Freeze Time activated! No timer this round.`);
@@ -663,7 +664,8 @@ async function handleAnswerSelection(i, answeredUsers, question, winner, answerR
     return;
   }
   answeredUsers.add(i.user.id);
-  addRoundPlayed(guildId, i.user.id);
+  await addRoundPlayed(guildId, i.user.id);
+  await recordUsername(i.user.id, i.user.username);
 
   const idx = parseInt(i.customId.replace("trivia_answer_", ""), 10);
   const selected = question.options[idx];
@@ -830,7 +832,8 @@ async function handleHintRequest(i, roundState, difficulty, track, question, rou
   }
 
   roundState.hintUsed = true;
-  addHintUsed(guildId, i.user.id);
+  await addHintUsed(guildId, i.user.id);
+  await recordUsername(i.user.id, i.user.username);
 
   // Disable hint button
   try {
@@ -988,8 +991,8 @@ async function finalizeRound(reason, question, winner, answerRow, controlRow, ro
     }
 
     // Update scores and stats
-    addPoints(guildId, winner.userId, pts);
-    addRoundWon(guildId, winner.userId);
+    await addPoints(guildId, winner.userId, pts);
+    await addRoundWon(guildId, winner.userId);
 
     // Show top scores
     const top = getGuildScoresSorted(guildId).slice(0, 5);
@@ -1104,7 +1107,7 @@ async function runGameRounds(guild, interaction, textChannel, voiceChannel, play
 async function finalizeGame(guild, textChannel, playersAcrossAllRounds) {
   // Update stats for all players
   for (const userId of playersAcrossAllRounds) {
-    addGamePlayed(guild.id, userId);
+    await addGamePlayed(guild.id, userId);
   }
 
   const finalSession = getSession(guild.id);
@@ -1114,7 +1117,7 @@ async function finalizeGame(guild, textChannel, playersAcrossAllRounds) {
       await textChannel.send("🏁 Game over! No points scored.");
     } else {
       const highestScorer = final[0];
-      addGameWon(guild.id, highestScorer[0]);
+      await addGameWon(guild.id, highestScorer[0]);
       const lines = final.slice(0, 10).map(([uid, p], idx) => `${idx + 1}. <@${uid}> — **${p}**`);
       await textChannel.send(`🏁 **Game over! Final scoreboard:**\n${lines.join("\n")}`);
     }

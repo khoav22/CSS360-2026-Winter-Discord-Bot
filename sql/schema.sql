@@ -1,0 +1,29 @@
+-- Shared schema for the Mozzarts trivia bot's persistent scores/stats.
+
+
+CREATE TABLE IF NOT EXISTS discord_users (
+  user_id VARCHAR(32) NOT NULL PRIMARY KEY,
+  username VARCHAR(64) NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS user_scores (
+  guild_id VARCHAR(32) NOT NULL,
+  user_id VARCHAR(32) NOT NULL,
+  all_time_points INT NOT NULL DEFAULT 0,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (guild_id, user_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS user_stats (
+  guild_id VARCHAR(32) NOT NULL,
+  user_id VARCHAR(32) NOT NULL,
+  rounds_played INT NOT NULL DEFAULT 0,
+  rounds_won INT NOT NULL DEFAULT 0,
+  games_played INT NOT NULL DEFAULT 0,
+  games_won INT NOT NULL DEFAULT 0,
+  hints_used INT NOT NULL DEFAULT 0,
+  powerups_used INT NOT NULL DEFAULT 0,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (guild_id, user_id)
+) ENGINE=InnoDB;

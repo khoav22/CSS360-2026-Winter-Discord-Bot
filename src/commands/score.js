@@ -20,7 +20,7 @@ export default {
 
     // Get stats for that user
     const score = getUserPoints(guildId, userId);
-    const allTimeScore = getUserAllTimePoints(guildId, userId);
+    const allTimeScore = await getUserAllTimePoints(guildId, userId);
 
     await interaction.reply({
       content: `Your scores:\nCurrent score: ${score}\nLifetime score: ${allTimeScore}`,

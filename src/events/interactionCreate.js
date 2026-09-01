@@ -1,4 +1,5 @@
 import { Events, MessageFlags } from "discord.js";
+import { recordUsername } from "../helpers/usersStore.js";
 
 export default {
   name: Events.InteractionCreate,
@@ -7,6 +8,11 @@ export default {
 
     const cmd = interaction.client.commands.get(interaction.commandName);
     if (!cmd) return;
+
+    // Fire-and-forget: keep a readable username on file for this user ID,
+    // purely so admin/debugging views (like `npm run db:check`) can show
+    // a name instead of a raw ID. Never blocks the actual command.
+    recordUsername(interaction.user.id, interaction.user.username);
 
     try {
       await cmd.execute(interaction);

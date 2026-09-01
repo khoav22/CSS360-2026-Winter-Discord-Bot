@@ -4,6 +4,7 @@ import path from "node:path";
 
 import loadEvents from "./helpers/loadEvents.js";
 import loadCommands from "./helpers/loadCommands.js";
+import { initDb } from "./helpers/db.js";
 
 const TOKEN = process.env.DISCORD_TOKEN || process.env.TOKEN;
 
@@ -28,4 +29,11 @@ client.commands = new Collection();
 loadEvents(client, path.join(__dirname, "events"));
 loadCommands(client, path.join(__dirname, "commands"));
 
-client.login(TOKEN);
+// Connect to the shared MySQL database (and make sure its tables exist)
+// before logging in, so scores/stats are ready as soon as the bot is up.
+initDb()
+  .then(() => client.login(TOKEN))
+  .catch((err) => {
+    console.error("[app] Failed to connect to the shared MySQL database:", err);
+    process.exit(1);
+  });
