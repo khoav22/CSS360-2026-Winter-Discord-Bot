@@ -1,4 +1,4 @@
-// Quick CLI to peek at what the bot has saved to the shared MySQL database.
+// MySQL database.
 // Run with: npm run db:check
 require("dotenv/config");
 const fs = require("fs");
