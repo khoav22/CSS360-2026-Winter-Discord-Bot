@@ -209,4 +209,9 @@ This release focuses on improving code quality, maintainability, and reliability
 - Improved unit testability and execution path coverage
 - /terminate now works instantly and is usable by all players (#85)
 
+# Version 3.0 Release Notes
 
+## Khoa Vo
+- Added MySQL database to store game information
+- Keeps track of username, user ID, all time game information (scores, powerups, high score)
+- Updated SBOM
